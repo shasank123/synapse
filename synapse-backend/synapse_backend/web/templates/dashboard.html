@@ -92,6 +92,64 @@
       {% endif %}
     </div>
 
+    <!-- Connect to an MCP host -->
+    {% set srv = (servers[0].name if servers else "mcp_server.py") %}
+    {% set srvkey = srv.replace(".py", "") %}
+    <div class="card mt-2">
+      <h3>🔌 Connect to an MCP host</h3>
+      <p class="muted">Once <span class="mono">synapse build</span> writes your
+        <span class="mono">{{ srv }}</span>, register it with Claude Desktop, Cursor, or any
+        MCP host. Paste this into the host's config, then restart it — your tools appear as
+        natural-language actions.</p>
+
+      <div class="flex" style="justify-content:space-between;margin-top:14px">
+        <b>MCP host config</b>
+        <button class="btn btn-ghost" id="copyMcp" style="padding:6px 12px;font-size:13px">Copy</button>
+      </div>
+      <div class="terminal mt-2"><div class="body"><pre id="mcpCfg" style="margin:0;white-space:pre-wrap;color:#cbd5e1">{
+  "mcpServers": {
+    "{{ srvkey }}": {
+      "command": "python",
+      "args": ["/absolute/path/to/{{ srv }}"]
+    }
+  }
+}</pre></div></div>
+
+      <div class="grid grid-2 mt-2">
+        <div>
+          <b style="font-size:14px">Claude Desktop</b>
+          <p class="muted" style="font-size:13px">Edit the config file, then restart Claude Desktop:</p>
+          <div class="mono muted" style="font-size:12.5px">
+            macOS: <span class="ink2">~/Library/Application Support/Claude/claude_desktop_config.json</span><br/>
+            Windows: <span class="ink2">%APPDATA%\Claude\claude_desktop_config.json</span>
+          </div>
+        </div>
+        <div>
+          <b style="font-size:14px">Cursor / Windsurf / Continue</b>
+          <p class="muted" style="font-size:13px">Add to the project or user MCP config:</p>
+          <div class="mono muted" style="font-size:12.5px">
+            Cursor: <span class="ink2">.cursor/mcp.json</span> (or <span class="ink2">~/.cursor/mcp.json</span>)<br/>
+            Continue: <span class="ink2">~/.continue/config.json</span>
+          </div>
+        </div>
+      </div>
+      <p class="muted mt-2" style="font-size:13px">💡 Replace <span class="mono">/absolute/path/to/{{ srv }}</span>
+        with the full path where you ran <span class="mono">synapse build</span>. Prefer a venv Python
+        that has your project + <span class="mono">mcp</span> installed.</p>
+    </div>
+
   </div>
 </section>
+
+<script>
+  (function () {
+    var btn = document.getElementById("copyMcp");
+    var cfg = document.getElementById("mcpCfg");
+    if (btn && cfg) btn.addEventListener("click", function () {
+      navigator.clipboard.writeText(cfg.textContent);
+      btn.textContent = "Copied!";
+      setTimeout(function () { btn.textContent = "Copy"; }, 1500);
+    });
+  })();
+</script>
 {% endblock %}
