@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Sign up · Synapse{% endblock %}
+{% block content %}
+<div class="card" style="max-width:420px;margin:40px auto">
+  <h1>Create your account</h1>
+  <p class="muted">Sign up to generate API keys for the Synapse CLI.</p>
+  <form method="post" action="/register">
+    <label>Full name</label>
+    <input type="text" name="full_name" />
+    <label>Email</label>
+    <input type="email" name="email" required />
+    <label>Password</label>
+    <input type="password" name="password" required />
+    <button type="submit">Sign up</button>
+  </form>
+  <p class="muted" style="margin-top:16px">
+    Already have an account? <a href="/login">Log in</a>
+  </p>
+</div>
+{% endblock %}
