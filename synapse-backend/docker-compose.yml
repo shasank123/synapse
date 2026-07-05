@@ -60,9 +60,7 @@ services:
 
   # One-shot: create DB tables, seed a dev API key, ensure S3 bucket + Qdrant collection.
   init:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: synapse-backend:local
     env_file: .env
     depends_on:
       postgres: { condition: service_healthy }
@@ -75,6 +73,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: synapse-backend:local   # built once here; api/worker/init reuse this tag
     env_file: .env
     ports:
       - "50051:50051"
@@ -86,9 +85,7 @@ services:
     command: python -m synapse_backend.grpc_service.server
 
   api:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: synapse-backend:local
     env_file: .env
     ports:
       - "8000:8000"
@@ -98,9 +95,7 @@ services:
     command: uvicorn synapse_backend.api.app:app --host 0.0.0.0 --port 8000
 
   worker:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: synapse-backend:local
     env_file: .env
     depends_on:
       redis: { condition: service_started }

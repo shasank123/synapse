@@ -30,12 +30,12 @@ async def _optional_user(request: Request, session: AsyncSession) -> User | None
 
 @router.get("/login", response_class=HTMLResponse)
 async def login_page(request: Request):
-    return templates.TemplateResponse("login.html", {"request": request})
+    return templates.TemplateResponse(request, "login.html", {})
 
 
 @router.get("/register", response_class=HTMLResponse)
 async def register_page(request: Request):
-    return templates.TemplateResponse("register.html", {"request": request})
+    return templates.TemplateResponse(request, "register.html", {})
 
 
 @router.get("/", response_class=HTMLResponse)
@@ -64,9 +64,9 @@ async def dashboard(
         ).scalars().all()
 
     return templates.TemplateResponse(
+        request,
         "dashboard.html",
         {
-            "request": request,
             "user": user,
             "keys": keys,
             "servers": servers,
