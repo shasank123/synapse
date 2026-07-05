@@ -18,6 +18,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from synapse_backend.api import (
+    routes_assistant,
     routes_auth,
     routes_keys,
     routes_playground,
@@ -52,6 +53,7 @@ app.include_router(routes_telemetry.router)
 app.include_router(routes_auth.router)
 app.include_router(routes_keys.router)
 app.include_router(routes_playground.router)
+app.include_router(routes_assistant.router)
 app.include_router(routes_web.router)
 
 
