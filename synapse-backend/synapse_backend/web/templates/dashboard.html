@@ -9,10 +9,13 @@
         <div class="eyebrow">Dashboard</div>
         <h2 style="font-size:28px">Welcome{% if user.full_name %}, {{ user.full_name }}{% endif %}</h2>
       </div>
-      <form method="post" action="/keys/create" class="flex">
-        <input class="input" name="name" placeholder="key name (e.g. laptop-cli)" value="default" style="width:220px" />
-        <button class="btn btn-primary" type="submit">Generate API key</button>
-      </form>
+      <div class="flex wrap">
+        <a class="btn btn-ghost" href="/app/playground">⚡ Playground</a>
+        <form method="post" action="/keys/create" class="flex">
+          <input class="input" name="name" placeholder="key name (e.g. laptop-cli)" value="default" style="width:200px" />
+          <button class="btn btn-primary" type="submit">Generate API key</button>
+        </form>
+      </div>
     </div>
 
     {% if new_key %}

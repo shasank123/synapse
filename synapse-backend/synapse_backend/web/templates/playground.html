@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block title %}Playground — Synapse{% endblock %}
+{% block body %}
+<section class="section">
+  <div class="container">
+    <div class="dash-head">
+      <div>
+        <div class="eyebrow">Playground</div>
+        <h2 style="font-size:28px">Generate an MCP server in the browser</h2>
+        <p class="muted">Paste Python functions, click Build, and watch the agent pipeline turn them into tools.</p>
+      </div>
+      <a class="btn btn-ghost" href="/app">← Back to dashboard</a>
+    </div>
+
+    <div class="split" style="align-items:start;gap:24px">
+      <!-- Editor -->
+      <div class="card">
+        <h3>Your code</h3>
+        <p class="muted" style="font-size:14px">Top-level functions become tool candidates. Private helpers (leading underscore) are filtered out.</p>
+        <form id="pgForm" class="mt-2">
+          <textarea id="code" name="code" class="input mono" spellcheck="false"
+            style="height:340px;resize:vertical;line-height:1.5;font-size:13.5px">{{ sample_code }}</textarea>
+          <button class="btn btn-primary btn-block btn-lg mt-2" type="submit" id="buildBtn">⚡ Build MCP server</button>
+        </form>
+      </div>
+
+      <!-- Output -->
+      <div class="card" id="output">
+        <h3>Result</h3>
+        <p class="muted" id="placeholder">Click <b>Build</b> to run: detect → plan → generate → validate.</p>
+
+        <div id="pipeline" class="hide mt-2"></div>
+        <div id="tools" class="hide mt-2"></div>
+
+        <div id="codeWrap" class="hide mt-2">
+          <div class="flex" style="justify-content:space-between">
+            <b id="codeTitle">mcp_server.py</b>
+            <button class="btn btn-ghost" id="copyBtn" style="padding:6px 12px;font-size:13px">Copy</button>
+          </div>
+          <div class="terminal mt-2"><div class="body"><pre id="code-out" style="margin:0;white-space:pre-wrap;word-break:break-word;color:#cbd5e1"></pre></div></div>
+        </div>
+
+        <div id="err" class="alert tag off hide mt-2" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  var form = document.getElementById("pgForm");
+  var btn = document.getElementById("buildBtn");
+  var ph = document.getElementById("placeholder");
+  var pipe = document.getElementById("pipeline");
+  var toolsEl = document.getElementById("tools");
+  var codeWrap = document.getElementById("codeWrap");
+  var codeOut = document.getElementById("code-out");
+  var errEl = document.getElementById("err");
+
+  function show(el) { el.classList.remove("hide"); el.style.display = ""; }
+  function hide(el) { el.classList.add("hide"); }
+
+  function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    btn.disabled = true; btn.textContent = "Building…";
+    hide(ph); hide(errEl); errEl.style.display = "none"; hide(codeWrap); hide(toolsEl);
+    pipe.innerHTML = ""; show(pipe);
+
+    var body = new URLSearchParams();
+    body.set("code", document.getElementById("code").value);
+
+    try {
+      var res = await fetch("/api/playground/build", { method: "POST", body: body });
+      var data = await res.json();
+
+      if (!res.ok || data.error) {
+        hide(pipe);
+        errEl.textContent = data.error || ("HTTP " + res.status);
+        show(errEl); errEl.style.display = "block";
+        return;
+      }
+
+      // Animate pipeline stages.
+      for (var i = 0; i < data.stages.length; i++) {
+        var s = data.stages[i];
+        var row = document.createElement("div");
+        row.className = "flex";
+        row.style.padding = "5px 0";
+        row.innerHTML = '<span style="color:var(--accent)">✓</span>' +
+          '<span class="mono" style="font-size:13px;color:var(--muted);width:96px">' + s.stage + '</span>' +
+          '<span style="font-size:14px">' + s.message + '</span>';
+        pipe.appendChild(row);
+        await sleep(90);
+      }
+
+      // Detected tools.
+      var chips = data.candidates.map(function (c) {
+        return '<span class="pill" style="font-size:13px">' + c.name +
+          ' <span class="muted">· ' + c.subcategory + ' · ' + c.confidence + '</span></span>';
+      }).join(" ");
+      toolsEl.innerHTML = '<b>' + data.tool_count + ' tool(s) generated</b> ' +
+        '<span class="muted">(' + data.extracted + ' functions scanned)</span>' +
+        '<div class="pill-row mt-2" style="justify-content:flex-start">' + chips + '</div>';
+      show(toolsEl);
+
+      // Code.
+      codeOut.textContent = data.server_code;
+      show(codeWrap);
+    } catch (ex) {
+      hide(pipe);
+      errEl.textContent = "Request failed: " + ex;
+      show(errEl); errEl.style.display = "block";
+    } finally {
+      btn.disabled = false; btn.textContent = "⚡ Build MCP server";
+    }
+  });
+
+  document.getElementById("copyBtn").addEventListener("click", function () {
+    navigator.clipboard.writeText(codeOut.textContent);
+    this.textContent = "Copied!";
+    var self = this; setTimeout(function () { self.textContent = "Copy"; }, 1500);
+  });
+})();
+</script>
+{% endblock %}

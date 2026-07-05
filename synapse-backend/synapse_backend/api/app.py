@@ -17,7 +17,13 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from synapse_backend.api import routes_auth, routes_keys, routes_telemetry, routes_web
+from synapse_backend.api import (
+    routes_auth,
+    routes_keys,
+    routes_playground,
+    routes_telemetry,
+    routes_web,
+)
 from synapse_backend.config import settings
 
 logging.basicConfig(
@@ -45,6 +51,7 @@ if os.path.isdir(_STATIC_DIR):
 app.include_router(routes_telemetry.router)
 app.include_router(routes_auth.router)
 app.include_router(routes_keys.router)
+app.include_router(routes_playground.router)
 app.include_router(routes_web.router)
 
 
