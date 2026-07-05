@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+{% block title %}Synapse — Your Enterprise Context Engine{% endblock %}
+{% block body %}
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="split">
+      <div>
+        <span class="badge"><span class="dot"></span> Early Access · Enterprise AI Platform</span>
+        <h1>Your <span class="grad-text">Enterprise Context</span> Engine</h1>
+        <p class="sub">Synapse analyzes your codebases and APIs and automatically generates
+          production-ready context — MCP servers that AI agents and LLMs can actually use.</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary btn-lg" href="/register">Get Started Free →</a>
+          <a class="btn btn-ghost btn-lg" href="/#demo">Book a Demo</a>
+        </div>
+        <p class="hero-note">Your system stays untouched. The AI handles the rest.</p>
+      </div>
+      <div class="terminal" aria-hidden="true">
+        <div class="bar"><i class="r"></i><i class="y"></i><i class="g"></i></div>
+        <div class="body">
+          <div><span class="dim">$</span> <span class="cmd">pip install synapse-cli</span></div>
+          <div><span class="dim">$</span> <span class="cmd">synapse analyze</span></div>
+          <div class="ok">✓ Parsed 3,412 files · extracted 547 functions</div>
+          <div class="ok">✓ Indexed embeddings in Qdrant</div>
+          <div style="margin-top:8px"><span class="dim">$</span> <span class="cmd">synapse build</span></div>
+          <div class="dim">→ Planner · Generator · Validator</div>
+          <div class="ok">✓ mcp_server.py — 12 tools, MCP compliant</div>
+          <div class="accent" style="margin-top:8px">Ready for Claude, Cursor, ChatGPT…</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Integrations -->
+<section class="section-tight">
+  <div class="container center">
+    <div class="eyebrow">Universal</div>
+    <h2 style="font-size:clamp(22px,3vw,32px)">Your context. Every agent. Any host.</h2>
+    <p class="lead center" style="margin-bottom:26px">Generated servers speak the open Model Context Protocol — drop them into any compatible host.</p>
+    <div class="pill-row">
+      {% for h in ["Claude","Claude Code","ChatGPT","Gemini","Copilot","Cursor","Windsurf","Continue.dev","Cline"] %}
+      <span class="pill">{{ h }}</span>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Metrics -->
+<section class="section-tight">
+  <div class="container">
+    <div class="card">
+      <div class="metrics">
+        <div class="metric"><div class="num grad-text">4–6 wk → 1 day</div><div class="lbl">Integration time</div></div>
+        <div class="metric"><div class="num grad-text">50K+</div><div class="lbl">Lines analyzed / min</div></div>
+        <div class="metric"><div class="num grad-text">100%</div><div class="lbl">MCP compliant</div></div>
+        <div class="metric"><div class="num grad-text">0</div><div class="lbl">Changes to your code</div></div>
+        <div class="metric"><div class="num grad-text">4</div><div class="lbl">LLM providers</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How it works -->
+<section class="section" id="product">
+  <div class="container center">
+    <div class="eyebrow">How it works</div>
+    <h2>Analyze. Build. Deploy.</h2>
+    <p class="lead center">A two-agent pipeline turns locked-in code into AI-ready tools — no rewrites, no glue code.</p>
+  </div>
+  <div class="container grid grid-2 mt-3">
+    <div class="card">
+      <div class="ico">🔎</div>
+      <h3>Analyze — semantic understanding, not surface scanning</h3>
+      <p>AST parsing extracts every function, signature, and dependency. Embeddings are indexed
+         in Qdrant so the planner retrieves exactly the right code for your request.</p>
+    </div>
+    <div class="card">
+      <div class="ico">🏗️</div>
+      <h3>Build — agentic generation, production-ready first pass</h3>
+      <p>Planner → Generator → Validator → Fix. Synapse writes typed, validated MCP tools with
+         structured error handling, using only the functions that exist in your codebase.</p>
+    </div>
+    <div class="card">
+      <div class="ico">🔒</div>
+      <h3>Zero code changes</h3>
+      <p>Your existing systems stay untouched. Synapse reads context and emits a standalone server —
+         nothing is modified in your repositories.</p>
+    </div>
+    <div class="card">
+      <div class="ico">⚡</div>
+      <h3>Ship in a day</h3>
+      <p>What used to take 4–6 weeks of custom integration becomes a single build step. Review the
+         detected tools, select what to expose, and you're live.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Tech stack -->
+<section class="section-tight">
+  <div class="container center">
+    <div class="eyebrow">Built on</div>
+    <div class="pill-row mt-2">
+      {% for t in ["Anthropic","CrewAI","FastAPI","GCP","GitHub","Groq","MCP","Qdrant","Stripe","Terraform"] %}
+      <span class="pill">{{ t }}</span>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Install CTA -->
+<section class="section">
+  <div class="container split">
+    <div>
+      <div class="eyebrow">Get started</div>
+      <h2>Two commands to your first MCP server</h2>
+      <p class="lead">Install the CLI, point it at your project, and let Synapse do the rest.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="/docs">Install the CLI</a>
+        <a class="btn btn-ghost" href="/usecases">See Usecases</a>
+      </div>
+    </div>
+    <div class="terminal">
+      <div class="bar"><i class="r"></i><i class="y"></i><i class="g"></i></div>
+      <div class="body">
+        <div><span class="dim">$</span> <span class="cmd">pip install synapse-cli</span></div>
+        <div><span class="dim">$</span> <span class="cmd">synapse init</span></div>
+        <div class="dim">Select your AI model · paste API key</div>
+        <div class="ok">✓ Configuration saved securely</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Demo form -->
+<section class="section" id="demo">
+  <div class="container">
+    <div class="card" style="max-width:760px;margin:0 auto">
+      <div class="center">
+        <div class="eyebrow">Talk to us</div>
+        <h2 style="font-size:clamp(24px,3vw,34px)">Book a demo</h2>
+        <p class="lead center">See Synapse turn your codebase into AI-ready tools.</p>
+      </div>
+      {% if demo_sent %}
+      <div class="alert mt-3">✅ Thanks — we've received your request and will be in touch shortly.</div>
+      {% else %}
+      <form method="post" action="/demo" class="mt-3">
+        <div class="form-row">
+          <div class="field"><label>First name</label><input class="input" name="first_name" required /></div>
+          <div class="field"><label>Last name</label><input class="input" name="last_name" required /></div>
+        </div>
+        <div class="field"><label>Email address</label><input class="input" type="email" name="email" required /></div>
+        <div class="form-row">
+          <div class="field"><label>Company (optional)</label><input class="input" name="company" /></div>
+          <div class="field"><label>Phone (optional)</label><input class="input" name="phone" /></div>
+        </div>
+        <div class="field"><label>How can we help?</label><input class="input" name="message" /></div>
+        <button class="btn btn-primary btn-block btn-lg" type="submit">Request demo</button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% endblock %}

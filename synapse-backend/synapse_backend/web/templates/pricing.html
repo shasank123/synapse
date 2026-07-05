@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Pricing — Synapse{% endblock %}
+{% block body %}
+<section class="section">
+  <div class="container center">
+    <div class="eyebrow">Pricing</div>
+    <h2>Start free. Scale when you're ready.</h2>
+    <p class="lead center">Every plan includes the CLI, semantic analysis, and MCP-compliant generation.</p>
+  </div>
+
+  <div class="container price-grid mt-3">
+    <div class="card price">
+      <div class="tier">Free</div>
+      <div class="amt">$0<span>/mo</span></div>
+      <p class="muted">For solo developers and evaluation.</p>
+      <ul>
+        <li>Up to 25 MCP servers</li>
+        <li>1M lines indexed</li>
+        <li>Mock &amp; bring-your-own-key models</li>
+        <li>Local semantic search</li>
+        <li>Community support</li>
+      </ul>
+      <a class="btn btn-ghost btn-block" href="/register">Get started</a>
+    </div>
+
+    <div class="card price h">
+      <div class="tier">Pro</div>
+      <div class="amt">$49<span>/mo</span></div>
+      <p class="muted">For teams shipping to production.</p>
+      <ul>
+        <li>Unlimited MCP servers</li>
+        <li>25M lines indexed</li>
+        <li>Claude, GPT-4, Groq &amp; Gemini</li>
+        <li>Server versioning &amp; S3 archive</li>
+        <li>Priority support</li>
+      </ul>
+      <a class="btn btn-primary btn-block" href="/register">Start free trial</a>
+    </div>
+
+    <div class="card price">
+      <div class="tier">Enterprise</div>
+      <div class="amt">Custom</div>
+      <p class="muted">For regulated, large-scale orgs.</p>
+      <ul>
+        <li>SSO, RBAC &amp; audit logging</li>
+        <li>Multi-tenant isolation</li>
+        <li>Dedicated / on-prem deployment</li>
+        <li>SOC2-ready, GDPR compliant</li>
+        <li>SLA &amp; solution engineering</li>
+      </ul>
+      <a class="btn btn-ghost btn-block" href="/#demo">Contact sales</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

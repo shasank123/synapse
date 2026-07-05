@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}{{ heading }} — Synapse{% endblock %}
+{% block body %}
+<section class="section">
+  <div class="container" style="max-width:760px">
+    <div class="eyebrow">Legal</div>
+    <h2>{{ heading }}</h2>
+    <p class="muted mt-2">Last updated: 2026. This is a summary document for the Synapse platform,
+       operated by 2nd Brain Labs.</p>
+    {% for para in paragraphs %}
+    <p class="ink2 mt-2">{{ para }}</p>
+    {% endfor %}
+    <p class="muted mt-3">Questions? Reach out via the <a href="/#demo">contact form</a>.</p>
+  </div>
+</section>
+{% endblock %}

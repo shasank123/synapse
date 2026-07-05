@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Docs — Synapse{% endblock %}
+{% block body %}
+<section class="section">
+  <div class="container">
+    <div class="center">
+      <div class="eyebrow">Docs</div>
+      <h2>Getting started</h2>
+      <p class="lead center">From install to a running MCP server in four steps.</p>
+    </div>
+
+    <div class="grid mt-3" style="max-width:820px;margin-left:auto;margin-right:auto">
+      <div class="card">
+        <h3>1 · Install the CLI</h3>
+        <p>Requires Python 3.11+.</p>
+        <div class="terminal mt-2"><div class="body"><span class="dim">$</span> <span class="cmd">pip install synapse-cli</span></div></div>
+      </div>
+      <div class="card">
+        <h3>2 · Create an API key</h3>
+        <p>Generate a key from your <a href="/app">dashboard</a>, then configure the CLI.</p>
+        <div class="terminal mt-2"><div class="body">
+          <div><span class="dim">$</span> <span class="cmd">synapse init</span></div>
+          <div><span class="dim">$</span> <span class="cmd">synapse config --key syn-api-…</span></div>
+        </div></div>
+      </div>
+      <div class="card">
+        <h3>3 · Analyze your codebase</h3>
+        <p>AST parse + embed + index — runs locally, your source never leaves your machine wholesale.</p>
+        <div class="terminal mt-2"><div class="body">
+          <div><span class="dim">$</span> <span class="cmd">synapse analyze</span></div>
+          <div class="ok">✓ Scanned codebase · indexed for semantic search</div>
+        </div></div>
+      </div>
+      <div class="card">
+        <h3>4 · Build &amp; run your MCP server</h3>
+        <p>Select the detected tools, generate, then plug the server into any MCP host.</p>
+        <div class="terminal mt-2"><div class="body">
+          <div><span class="dim">$</span> <span class="cmd">synapse build</span></div>
+          <div class="ok">✓ mcp_server.py generated</div>
+          <div><span class="dim">$</span> <span class="cmd">python mcp_server.py</span></div>
+        </div></div>
+      </div>
+      <div class="card">
+        <h3>Self-hosting the backend</h3>
+        <p>Run the full platform locally with Docker Compose (Postgres · Redis · Qdrant · MinIO ·
+           gRPC · API · worker), then point the CLI's <span class="mono">config.json</span> at
+           <span class="mono">localhost:50051</span> / <span class="mono">localhost:8000</span>.</p>
+        <div class="terminal mt-2"><div class="body">
+          <div><span class="dim">$</span> <span class="cmd">docker compose up --build</span></div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

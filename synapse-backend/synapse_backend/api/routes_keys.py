@@ -63,7 +63,7 @@ async def create_key_form(
     """Dashboard form action — mint a key and show it once via query param."""
     _, raw = await create_api_key_async(session, user.id, name=name)
     return RedirectResponse(
-        url=f"/?new_key={raw}", status_code=status.HTTP_303_SEE_OTHER
+        url=f"/app?new_key={raw}", status_code=status.HTTP_303_SEE_OTHER
     )
 
 
@@ -77,4 +77,4 @@ async def revoke_key(
     if key is not None and key.user_id == user.id:
         key.active = False
         await session.commit()
-    return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
+    return RedirectResponse(url="/app", status_code=status.HTTP_303_SEE_OTHER)

@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, Form, HTTPException, Response, status
+from urllib.parse import quote
+
+from fastapi import APIRouter, Depends, Form, Response, status
 from fastapi.responses import RedirectResponse
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -41,7 +43,10 @@ async def register(
         await session.execute(select(User).where(User.email == email))
     ).scalar_one_or_none()
     if existing is not None:
-        raise HTTPException(status_code=400, detail="Email already registered")
+        return RedirectResponse(
+            url="/register?error=" + quote("Email already registered"),
+            status_code=status.HTTP_303_SEE_OTHER,
+        )
     user = User(
         email=email, password_hash=hash_password(password), full_name=full_name
     )
@@ -49,7 +54,7 @@ async def register(
     await session.commit()
     await session.refresh(user)
 
-    response = RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
+    response = RedirectResponse(url="/app", status_code=status.HTTP_303_SEE_OTHER)
     _set_session_cookie(response, user)
     return response
 
@@ -64,9 +69,12 @@ async def login(
         await session.execute(select(User).where(User.email == email))
     ).scalar_one_or_none()
     if user is None or not verify_password(password, user.password_hash):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
+        return RedirectResponse(
+            url="/login?error=" + quote("Invalid email or password"),
+            status_code=status.HTTP_303_SEE_OTHER,
+        )
 
-    response = RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
+    response = RedirectResponse(url="/app", status_code=status.HTTP_303_SEE_OTHER)
     _set_session_cookie(response, user)
     return response
 

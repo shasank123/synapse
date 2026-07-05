@@ -1,18 +1,22 @@
 {% extends "base.html" %}
-{% block title %}Log in · Synapse{% endblock %}
-{% block content %}
-<div class="card" style="max-width:420px;margin:40px auto">
-  <h1>Log in</h1>
-  <p class="muted">Access your Synapse dashboard and API keys.</p>
-  <form method="post" action="/login">
-    <label>Email</label>
-    <input type="email" name="email" required />
-    <label>Password</label>
-    <input type="password" name="password" required />
-    <button type="submit">Log in</button>
-  </form>
-  <p class="muted" style="margin-top:16px">
-    No account? <a href="/register">Create one</a>
-  </p>
-</div>
+{% block title %}Log in — Synapse{% endblock %}
+{% block body %}
+<section class="section">
+  <div class="auth-wrap">
+    <div class="card">
+      <div class="center">
+        <div class="brand center" style="justify-content:center"><span class="logo">S</span> Synapse</div>
+        <h2 style="font-size:24px;margin-top:14px">Welcome back</h2>
+        <p class="muted">Log in to manage your API keys and MCP servers.</p>
+      </div>
+      {% if error %}<div class="alert tag off mt-2" style="display:block">{{ error }}</div>{% endif %}
+      <form method="post" action="/login" class="mt-3">
+        <div class="field"><label>Email</label><input class="input" type="email" name="email" required /></div>
+        <div class="field"><label>Password</label><input class="input" type="password" name="password" required /></div>
+        <button class="btn btn-primary btn-block btn-lg" type="submit">Log in</button>
+      </form>
+      <p class="muted center mt-2">No account? <a href="/register" style="color:var(--accent)">Create one free</a></p>
+    </div>
+  </div>
+</section>
 {% endblock %}

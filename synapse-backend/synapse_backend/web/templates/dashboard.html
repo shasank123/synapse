@@ -1,93 +1,93 @@
 {% extends "base.html" %}
-{% block title %}Dashboard · Synapse{% endblock %}
-{% block content %}
+{% block title %}Dashboard — Synapse{% endblock %}
+{% block body %}
+<section class="section">
+  <div class="container">
 
-<h1>Dashboard</h1>
-<p class="muted">Manage API keys and see your generated MCP servers.</p>
-
-{% if new_key %}
-<div class="card" style="border-color:var(--teal)">
-  <h2>🔑 New API key — copy it now (shown only once)</h2>
-  <div class="keybox">{{ new_key }}</div>
-  <p class="muted" style="margin-top:12px">Configure the CLI:
-    <code>synapse config --key {{ new_key }}</code>
-  </p>
-</div>
-{% endif %}
-
-<div class="card">
-  <h2>Create an API key</h2>
-  <form class="inline" method="post" action="/keys/create">
-    <div style="flex:1">
-      <label class="muted">Name</label>
-      <input type="text" name="name" placeholder="e.g. laptop-cli" value="default" />
+    <div class="dash-head">
+      <div>
+        <div class="eyebrow">Dashboard</div>
+        <h2 style="font-size:28px">Welcome{% if user.full_name %}, {{ user.full_name }}{% endif %}</h2>
+      </div>
+      <form method="post" action="/keys/create" class="flex">
+        <input class="input" name="name" placeholder="key name (e.g. laptop-cli)" value="default" style="width:220px" />
+        <button class="btn btn-primary" type="submit">Generate API key</button>
+      </form>
     </div>
-    <button type="submit">Generate key</button>
-  </form>
-</div>
 
-<div class="card">
-  <h2>Your API keys</h2>
-  {% if keys %}
-  <table>
-    <thead>
-      <tr><th>Name</th><th>Key</th><th>MCP servers</th><th>Lines indexed</th><th>Status</th><th></th></tr>
-    </thead>
-    <tbody>
-      {% for k in keys %}
-      <tr>
-        <td>{{ k.name }}</td>
-        <td class="mono">{{ k.key_prefix }}…</td>
-        <td>
-          {{ k.servers_generated }} / {{ k.max_mcp_servers }}
-          <div class="bar"><span style="width:{{ (100 * k.servers_generated / k.max_mcp_servers) if k.max_mcp_servers else 0 }}%"></span></div>
-        </td>
-        <td>
-          {{ "{:,}".format(k.lines_indexed) }} / {{ "{:,}".format(k.max_lines_indexed) }}
-          <div class="bar"><span style="width:{{ (100 * k.lines_indexed / k.max_lines_indexed) if k.max_lines_indexed else 0 }}%"></span></div>
-        </td>
-        <td>
-          {% if k.active %}<span class="pill">active</span>
-          {% else %}<span class="pill" style="background:#fee2e2;color:#b91c1c">revoked</span>{% endif %}
-        </td>
-        <td>
-          {% if k.active %}
-          <form method="post" action="/keys/{{ k.id }}/revoke" onsubmit="return confirm('Revoke this key?')">
-            <button class="ghost" type="submit">Revoke</button>
-          </form>
-          {% endif %}
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  {% else %}
-  <p class="muted">No keys yet — create one above.</p>
-  {% endif %}
-</div>
+    {% if new_key %}
+    <div class="card alert mt-0" style="margin-bottom:22px">
+      <h3>🔑 New API key — copy it now (shown once)</h3>
+      <div class="keybox mt-2">{{ new_key }}</div>
+      <p class="muted mt-2">Configure the CLI: <span class="mono">synapse config --key {{ new_key }}</span></p>
+    </div>
+    {% endif %}
 
-<div class="card">
-  <h2>Generated MCP servers</h2>
-  {% if servers %}
-  <table>
-    <thead>
-      <tr><th>Name</th><th>Tools</th><th>Lines</th><th>Query</th><th>Created</th></tr>
-    </thead>
-    <tbody>
-      {% for s in servers %}
-      <tr>
-        <td class="mono">{{ s.name }}</td>
-        <td>{{ s.tool_count }}</td>
-        <td>{{ s.line_count }}</td>
-        <td class="muted">{{ s.query[:60] }}{% if s.query|length > 60 %}…{% endif %}</td>
-        <td class="muted">{{ s.created_at.strftime('%Y-%m-%d %H:%M') if s.created_at else '' }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  {% else %}
-  <p class="muted">No servers generated yet. Run <code>synapse build</code> against this backend.</p>
-  {% endif %}
-</div>
+    <!-- Aggregate stats -->
+    {% set total_servers = keys | sum(attribute='servers_generated') %}
+    {% set total_lines = keys | sum(attribute='lines_indexed') %}
+    <div class="stat-row">
+      <div class="card stat"><div class="k">API keys</div><div class="v">{{ keys | length }}</div></div>
+      <div class="card stat"><div class="k">MCP servers built</div><div class="v">{{ total_servers }}</div></div>
+      <div class="card stat"><div class="k">Lines indexed</div><div class="v">{{ "{:,}".format(total_lines) }}</div></div>
+    </div>
 
+    <!-- Keys -->
+    <div class="card">
+      <h3>API keys</h3>
+      {% if keys %}
+      <table class="mt-2">
+        <thead><tr><th>Name</th><th>Key</th><th>Servers</th><th>Lines indexed</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          {% for k in keys %}
+          <tr>
+            <td>{{ k.name }}</td>
+            <td class="mono">{{ k.key_prefix }}…</td>
+            <td style="min-width:130px">
+              {{ k.servers_generated }} / {{ k.max_mcp_servers }}
+              <div class="bar"><span style="width:{{ (100 * k.servers_generated / k.max_mcp_servers) if k.max_mcp_servers else 0 }}%"></span></div>
+            </td>
+            <td style="min-width:150px">
+              {{ "{:,}".format(k.lines_indexed) }} / {{ "{:,}".format(k.max_lines_indexed) }}
+              <div class="bar"><span style="width:{{ (100 * k.lines_indexed / k.max_lines_indexed) if k.max_lines_indexed else 0 }}%"></span></div>
+            </td>
+            <td>{% if k.active %}<span class="tag">active</span>{% else %}<span class="tag off">revoked</span>{% endif %}</td>
+            <td>{% if k.active %}
+              <form method="post" action="/keys/{{ k.id }}/revoke" onsubmit="return confirm('Revoke this key?')">
+                <button class="btn btn-ghost" type="submit" style="padding:6px 12px;font-size:13px">Revoke</button>
+              </form>{% endif %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p class="muted mt-2">No keys yet — generate one above to start using the CLI.</p>
+      {% endif %}
+    </div>
+
+    <!-- Servers -->
+    <div class="card mt-2">
+      <h3>Generated MCP servers</h3>
+      {% if servers %}
+      <table class="mt-2">
+        <thead><tr><th>Name</th><th>Tools</th><th>Lines</th><th>Query</th><th>Created</th></tr></thead>
+        <tbody>
+          {% for s in servers %}
+          <tr>
+            <td class="mono">{{ s.name }}</td>
+            <td>{{ s.tool_count }}</td>
+            <td>{{ s.line_count }}</td>
+            <td class="muted">{{ s.query[:56] }}{% if s.query|length > 56 %}…{% endif %}</td>
+            <td class="muted">{{ s.created_at.strftime('%Y-%m-%d %H:%M') if s.created_at else '' }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p class="muted mt-2">No servers yet. Run <span class="mono">synapse build</span> against this backend.</p>
+      {% endif %}
+    </div>
+
+  </div>
+</section>
 {% endblock %}

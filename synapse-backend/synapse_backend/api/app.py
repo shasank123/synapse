@@ -26,7 +26,9 @@ logging.basicConfig(
 )
 logger = logging.getLogger("synapse.api")
 
-app = FastAPI(title="Synapse API", version="0.1.0")
+# Disable FastAPI's built-in /docs (Swagger) so /docs serves the marketing page.
+# The OpenAPI schema stays available at /openapi.json.
+app = FastAPI(title="Synapse API", version="0.1.0", docs_url=None, redoc_url=None)
 
 app.add_middleware(
     CORSMiddleware,

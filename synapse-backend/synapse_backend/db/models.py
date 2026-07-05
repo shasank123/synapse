@@ -144,6 +144,23 @@ class MCPServer(Base):
     api_key: Mapped["ApiKey"] = relationship(back_populates="mcp_servers")
 
 
+class Lead(Base):
+    """Demo/contact requests from the marketing site."""
+
+    __tablename__ = "leads"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    first_name: Mapped[str] = mapped_column(String(120), default="")
+    last_name: Mapped[str] = mapped_column(String(120), default="")
+    email: Mapped[str] = mapped_column(String(255), index=True)
+    company: Mapped[str] = mapped_column(String(255), default="")
+    phone: Mapped[str] = mapped_column(String(64), default="")
+    message: Mapped[str] = mapped_column(Text, default="")
+    created_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+
 class Event(Base):
     __tablename__ = "events"
 
