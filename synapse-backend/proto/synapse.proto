@@ -1,0 +1,184 @@
+// Synapse gRPC service contract.
+//
+// Reconstructed verbatim from the compiled descriptor shipped in the
+// synapse-cli client (grpc_client/generated/synapse_pb2.py, protoc 6.31.1).
+// The backend reuses the client's generated stubs for wire compatibility;
+// this .proto is the human-readable source of truth + lets you regenerate.
+syntax = "proto3";
+
+package synapse;
+
+// ── Build (bidirectional streaming) ──────────────────────────────────────────
+message BuildMessage {
+  oneof payload {
+    BuildRequest build_request = 1;      // client -> server (first message)
+    ToolCallResponse tool_response = 2;  // client -> server (reply to a tool_request)
+    StatusUpdate status_update = 3;      // server -> client
+    ToolCallRequest tool_request = 4;    // server -> client (run a local tool)
+    BuildResult build_result = 5;        // server -> client (final)
+    ErrorMessage error = 6;              // server -> client (terminal error)
+  }
+}
+
+message BuildRequest {
+  string request_id = 1;
+  string query = 2;
+  string project_schema = 3;
+  string working_dir = 4;
+  string output_file = 5;
+  bool validate = 6;
+  bool docs = 7;
+  bool generate_only = 8;
+  string todo_list_content = 9;
+  string context_bundle = 10;  // JSON string of pre-gathered context
+}
+
+message ToolCallRequest {
+  string request_id = 1;
+  string tool_name = 2;   // read_file | write_file | replace_file | insert_file | codebase_context_search
+  bytes parameters = 3;   // JSON-encoded params
+}
+
+message ToolCallResponse {
+  string request_id = 1;
+  bool success = 2;
+  bytes result = 3;       // JSON-encoded result
+  string error = 4;
+}
+
+message StatusUpdate {
+  string stage = 1;       // initializing | planning | task_list | generating | complete
+  string message = 2;
+  float progress = 3;     // 0.0 - 1.0
+  string agent_name = 4;
+  string task_name = 5;
+}
+
+message BuildResult {
+  bool success = 1;
+  string server_code = 2;   // the generated mcp_server.py source
+  int32 tool_count = 3;
+  int32 resource_count = 4;
+  string documentation = 5;
+  string todo_list = 6;
+  string error = 7;
+}
+
+message ErrorMessage {
+  string code = 1;
+  string message = 2;
+  string details = 3;
+  bool recoverable = 4;
+}
+
+// ── Analyze (bidirectional streaming) — legacy; analyze is local in the CLI ──
+message AnalyzeMessage {
+  oneof payload {
+    AnalyzeRequest analyze_request = 1;
+    ToolCallResponse tool_response = 2;
+    StatusUpdate status_update = 3;
+    ToolCallRequest tool_request = 4;
+    AnalyzeResult analyze_result = 5;
+    ErrorMessage error = 6;
+  }
+}
+
+message AnalyzeRequest {
+  string request_id = 1;
+  string working_dir = 2;
+  bool verbose = 3;
+  bool use_ai = 4;
+}
+
+message AnalyzeResult {
+  bool success = 1;
+  string schema_content = 2;
+  bytes statistics = 3;
+  int32 directory_count = 4;
+  int32 file_count = 5;
+  int32 module_count = 6;
+  int32 class_count = 7;
+  int32 function_count = 8;
+  int32 method_count = 9;
+}
+
+// ── Tool parameter schemas (informational) ───────────────────────────────────
+message ReadFileParams { string target_file = 1; int32 start_line = 2; int32 end_line = 3; }
+message WriteFileParams { string target_file = 1; string content = 2; }
+message ReplaceFileParams { string target_file = 1; int32 start_line = 2; int32 end_line = 3; string content = 4; }
+message InsertFileParams { string target_file = 1; string content = 2; int32 line_number = 3; }
+message ContextSearchParams { string query = 1; string working_dir = 2; int32 max_results = 3; int32 max_depth = 4; }
+message AnalyzeCodebaseParams { string working_dir = 1; }
+
+// ── DetectEndpoints (unary) ──────────────────────────────────────────────────
+message FunctionInfo {
+  string name = 1;
+  string file_path = 2;
+  string signature = 3;
+  string docstring = 4;
+  string return_type = 5;
+  bool is_async = 6;
+  int32 line_number = 7;
+  repeated string param_names = 8;
+  repeated string param_types = 9;
+  string endpoint_type = 10;
+}
+
+message DetectRequest {
+  string working_dir = 1;
+  repeated FunctionInfo functions = 2;
+  string project_schema = 3;
+}
+
+message DetectedEndpoint {
+  string name = 1;
+  string file_path = 2;
+  float confidence = 3;
+  string human_title = 4;
+  string human_description = 5;
+  string conversion_type = 6;         // ready | requires_wrapper
+  string client_dependency_json = 7;  // JSON: {client_name, library, env_vars[]}
+  string subcategory = 8;
+  string signature = 9;
+  string docstring = 10;
+  int32 line_number = 11;
+}
+
+message DetectResponse {
+  repeated DetectedEndpoint candidates = 1;
+  string error = 2;
+}
+
+// ── Health ───────────────────────────────────────────────────────────────────
+message HealthCheckRequest { string service = 1; }
+message HealthCheckResponse {
+  enum ServingStatus { UNKNOWN = 0; SERVING = 1; NOT_SERVING = 2; }
+  ServingStatus status = 1;
+  string version = 2;
+  int64 uptime_seconds = 3;
+}
+
+// ── TrackEvent (unary) — telemetry + quota ───────────────────────────────────
+message TrackEventRequest {
+  string event_type = 1;      // quota_check | quota_info | analyze | build | detect | init
+  string api_key_hash = 2;    // sha256(api_key)
+  string working_dir_hash = 3;
+  int64 lines_count = 4;
+}
+
+message TrackEventResponse {
+  bool success = 1;
+  bool quota_exceeded = 2;
+  string quota_message = 3;
+  int32 mcp_servers_count = 4;
+  int32 max_mcp_servers = 5;
+  int64 lines_indexed = 6;
+  int64 max_lines_indexed = 7;
+}
+
+service SynapseService {
+  rpc Build(stream BuildMessage) returns (stream BuildMessage);
+  rpc Analyze(stream AnalyzeMessage) returns (stream AnalyzeMessage);
+  rpc DetectEndpoints(DetectRequest) returns (DetectResponse);
+  rpc TrackEvent(TrackEventRequest) returns (TrackEventResponse);
+}

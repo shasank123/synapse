@@ -1,0 +1,39 @@
+# ── The synapse-cli is a separate upstream repo (2ndbrainpartners) cloned for
+#    reference. Not part of this personal repo. Clone it yourself:
+#    git clone https://github.com/2ndbrainpartners/synapse-cli.git
+synapse-cli/
+
+# ── Claude Code local settings (machine-specific, not for the team) ──
+.claude/settings.local.json
+
+# ── Secrets ──
+.env
+*.env
+!.env.example
+
+# ── Python ──
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# ── Data / volumes ──
+data/
+*.sqlite
+*.db
+
+# ── OS / editor ──
+.DS_Store
+Thumbs.db
+.idea/
+*.swp
