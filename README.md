@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/shasank123-synapse-badge.png)](https://mseep.ai/app/shasank123-synapse)
+
 # Synapse
 
 **Agentic MCP Server Generator** — a full-stack platform that turns any codebase
